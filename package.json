@@ -1,0 +1,22 @@
+{
+  "name": "aeo-audit",
+  "version": "1.0.0",
+  "description": "The open AEO/GEO audit standard. CLI + library for scoring any URL against the 47-signal VectorCite Rubric. MIT-licensed.",
+  "keywords": ["aeo", "geo", "answer-engine-optimization", "generative-engine-optimization", "seo", "audit", "chatgpt", "perplexity", "claude", "ai-citation"],
+  "homepage": "https://vectorcite.digiocular.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shashankshukl30/aeo-audit.git"
+  },
+  "bugs": "https://github.com/shashankshukl30/aeo-audit/issues",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": { "aeo-audit": "./bin/aeo-audit.js" },
+  "files": ["bin", "src", "AEO-SPEC-v1.md", "README.md", "LICENSE"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test src/grader.test.js",
+    "start": "node bin/aeo-audit.js"
+  }
+}

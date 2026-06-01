@@ -1,0 +1,46 @@
+# Reusable GitHub Action that runs aeo-audit and writes a README badge.
+# Drop this into your own .github/workflows/ to keep the badge auto-updated.
+
+name: AEO Score
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # weekly Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: 'Domain to audit'
+        required: true
+        default: 'example.com'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run aeo-audit
+        run: |
+          DOMAIN="${{ github.event.inputs.domain || vars.AEO_DOMAIN || 'example.com' }}"
+          npx aeo-audit "$DOMAIN" --json > aeo-result.json
+          cat aeo-result.json
+
+      - name: Upload result as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aeo-result
+          path: aeo-result.json
+
+      - name: Fail on low score
+        run: |
+          SCORE=$(jq -r '.grade.score' aeo-result.json)
+          echo "Score: $SCORE"
+          if [ "$SCORE" -lt 60 ]; then
+            echo '::error::AEO score below threshold of 60'
+            exit 1
+          fi
